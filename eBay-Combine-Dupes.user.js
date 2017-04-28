@@ -2,7 +2,7 @@
 // @name         eBay - Combine Dupes
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/eBay-Combine-Dupes/raw/master/eBay-Combine-Dupes.user.js
-// @version      0.2
+// @version      0.3
 // @description  Combine duplicate entries on a search result page by comparing images.
 // @author       LenAnderson
 // @match        *://www.ebay.com/sch/i.html*
@@ -36,7 +36,7 @@
                 console.log('\t', imgs.length);
                 for(var i=0;i<imgs.length;i++) {
                     try {
-                        var diff = pixelmatch(imgs[i].data, imgData.data, null, img.naturalWidth, img.naturalHeight, {stepX:2,stepY:2});
+                        var diff = pixelmatch(imgs[i].data, imgData.data, null, img.naturalWidth, img.naturalHeight, {stepX:2,stepY:2, diffLimit:1});
                         if (diff <= 0) {
                             imgs[i].dupes.push(img);
                             img.parentNode.parentNode.parentNode.parentNode.remove();
@@ -70,7 +70,7 @@
 
     function pixelmatch(img1, img2, output, width, height, options) {
         if (img1.length !== img2.length) throw new Error('Image sizes do not match.');
-        if (!options) options = {stepX:1, stepY:1};
+        if (!options) options = {stepX:1, stepY:1, diffLimit:1};
 
         var threshold = options.threshold === undefined ? 0.1 : options.threshold;
         // maximum acceptable square distance between two colors;
@@ -97,6 +97,9 @@
                         // found substantial difference not caused by anti-aliasing; draw it as red
                         if (output) drawPixel(output, pos, 255, 0, 0);
                         diff++;
+                        if (diff >= options.diffLimit) {
+                            return diff;
+                        }
                     }
                 } else if (output) {
                     // pixels are similar; draw background as grayscale image blended with white
