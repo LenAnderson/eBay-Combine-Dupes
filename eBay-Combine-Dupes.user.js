@@ -2,7 +2,7 @@
 // @name         eBay - Combine Dupes
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/eBay-Combine-Dupes/raw/master/eBay-Combine-Dupes.user.js
-// @version      0.3
+// @version      0.4
 // @description  Combine duplicate entries on a search result page by comparing images.
 // @author       LenAnderson
 // @match        *://www.ebay.com/sch/i.html*
@@ -36,7 +36,7 @@
                 console.log('\t', imgs.length);
                 for(var i=0;i<imgs.length;i++) {
                     try {
-                        var diff = pixelmatch(imgs[i].data, imgData.data, null, img.naturalWidth, img.naturalHeight, {stepX:2,stepY:2, diffLimit:1});
+                        var diff = pixelmatch(imgs[i].data, imgData.data, null, img.naturalWidth, img.naturalHeight, {stepX:2,stepY:2, diffLimit:1, includeAA:true});
                         if (diff <= 0) {
                             imgs[i].dupes.push(img);
                             img.parentNode.parentNode.parentNode.parentNode.remove();
