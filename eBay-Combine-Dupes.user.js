@@ -2,10 +2,10 @@
 // @name         eBay - Combine Dupes
 // @namespace    https://github.com/LenAnderson/
 // @downloadURL  https://github.com/LenAnderson/eBay-Combine-Dupes/raw/master/eBay-Combine-Dupes.user.js
-// @version      0.1
+// @version      0.2
 // @description  Combine duplicate entries on a search result page by comparing images.
 // @author       LenAnderson
-// @match        *://www.ebay.*/sch/i.html*
+// @match        *://www.ebay.com/sch/i.html*
 // @grant        none
 // ==/UserScript==
 
@@ -15,10 +15,11 @@
     var proms = [];
     [].forEach.call(document.querySelectorAll('#ListViewInner > li > .lvpic.pic.img > .lvpicinner > .img > img'), function(img) {
         proms.push(new Promise(function(resolve, reject) {
+            img.crossOrigin = '';
             if (img.getAttribute('imgurl')) {
-                img.src = img.getAttribute('imgurl');
+                img.src = img.getAttribute('imgurl') + '?t=' + new Date().getTime();
             } else if (img.naturalHeight > 0) {
-                resolve();
+                img.src = img.src + '?t=' + new Date().getTime();
             }
             img.addEventListener('load', resolve);
             img.addEventListener('error', resolve);
